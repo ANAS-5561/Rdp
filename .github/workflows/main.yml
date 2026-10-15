@@ -1,0 +1,43 @@
+name: Free Cloud RDP (Serveo)
+
+on:
+  workflow_dispatch:
+    inputs:
+      vnc_password:
+        description: 'كلمة مرور الـ VNC (أكثر من 6 أحرف)'
+        required: true
+        default: '12345678'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Update & Install XFCE Desktop & VNC
+        run: |
+          sudo apt update
+          sudo apt install -y xfce4 xfce4-goodies tightvncserver
+
+      - name: Configure VNC Password
+        run: |
+          mkdir -p ~/.vnc
+          echo "${{ github.event.inputs.vnc_password }}" | vncpasswd -f > ~/.vnc/passwd
+          chmod 600 ~/.vnc/passwd
+          echo "desktop" > ~/.vnc/xstartup
+          chmod +x ~/.vnc/xstartup
+
+      - name: Start VNC Server
+        run: |
+          vncserver :1 -geometry 1280x720 -depth 24
+
+      - name: Start Tunnel (Serveo)
+        run: |
+          echo "=========================================="
+          echo " انسخ الرابط الذي سيظهر في الأسفل للاتصال عبر VNC Viewer"
+          echo "=========================================="
+          ssh -o StrictHostKeyChecking=no -R 0:localhost:5901 serveo.net
+          
