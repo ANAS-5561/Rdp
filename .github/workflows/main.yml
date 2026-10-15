@@ -34,8 +34,13 @@ jobs:
           $playitUrl = "https://github.com/playit-cloud/playit-agent/releases/latest/download/playit-windows-x86_64.exe"
           Invoke-WebRequest -Uri $playitUrl -OutFile "playit.exe"
           
-          # تشغيل الأداة في الخلفية وربطها بمنفذ RDP (3389)
-          Start-Process -FilePath ".\playit.exe" -ArgumentList "--forward 3389:3389/tcp" -NoNewWindow
+          # تشغيل الأداة لتوليد رابط المطالبة في السجلات
+          Start-Process -FilePath ".\playit.exe" -NoNewWindow
           
-          Write-Host "انتظر قليلاً حتى يظهر رابط التوجيه (Claim URL أو العنوان المباشر) في الأسفل..."
-          Start-Sleep -Seconds 10
+          Write-Host "=================================================="
+          Write-Host " انتظر 15 ثانية حتى يظهر رابط الـ Claim URL في السجلات أدناه..."
+          Write-Host " افتح الرابط في متصفحك لربطه بحسابك، ثم أنشئ نفق TCP للبورت 3389"
+          Write-Host " اسم المستخدم: runneradmin"
+          Write-Host " كلمة المرور: P@ssw0rd123!"
+          Write-Host "=================================================="
+          Start-Sleep
