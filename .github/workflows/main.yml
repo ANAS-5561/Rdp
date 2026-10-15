@@ -1,4 +1,4 @@
-name: Free Cloud RDP (Serveo)
+name: Free Cloud RDP (Pinggy)
 
 on:
   workflow_dispatch:
@@ -34,10 +34,9 @@ jobs:
         run: |
           vncserver :1 -geometry 1280x720 -depth 24
 
-      - name: Start Tunnel (Serveo)
+      - name: Start Tunnel (Pinggy)
         run: |
           echo "=========================================="
-          echo " انسخ الرابط الذي سيظهر في الأسفل للاتصال عبر VNC Viewer"
+          echo " انسخ رابط الـ TCP الظاهر أدناه وضعْه في تطبيق VNC Viewer"
           echo "=========================================="
-          ssh -o StrictHostKeyChecking=no -R 0:localhost:5901 serveo.net
-          
+          ssh -p 443 -o StrictHostKeyChecking=no -R0:localhost:5901 tcp.pinggy.io
