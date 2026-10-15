@@ -1,0 +1,40 @@
+name: Windows Native RDP
+
+on:
+  workflow_dispatch:
+
+jobs:
+  rdp:
+    runs-on: windows-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Administrator Password
+        run: |
+          net user admin admin123
+          echo "تم تعيين كلمة المرور بنجاح."
+
+      - name: Enable Remote Desktop (RDP)
+        run: |
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
+          Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+          Write-Host "تم تفعيل سطح المكتب البعيد بنجاح."
+
+      - name: Show Workspace Files
+        run: |
+          Write-Host "مسار العمل الحالي: $env:GITHUB_WORKSPACE"
+          Get-ChildItem -Path $env:GITHUB_WORKSPACE -Recurse
+
+      - name: Expose RDP Port via Pinggy
+        run: |
+          Write-Host "=================================================="
+          Write-Host " جاري تشغيل نفق الاتصال لنظام ويندوز..."
+          Write-Host " انسخ عنوان الـ TCP الظاهر في الأسفل وضعه في تطبيق Remote Desktop"
+          Write-Host " اسم المستخدم: runneradmin"
+          Write-Host " كلمة المرور: "
+          Write-Host "=================================================="
+          ssh -p 443 -o StrictHostKeyChecking=no -R0:localhost:3389 tcp.pinggy.io
