@@ -24,18 +24,12 @@ jobs:
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
           Write-Host "تم تفعيل سطح المكتب البعيد بنجاح."
 
-      - name: Show Workspace Files
-        run: |
-          Write-Host "مسار العمل الحالي: $env:GITHUB_WORKSPACE"
-          Get-ChildItem -Path $env:GITHUB_WORKSPACE -Recurse
-
-      - name: Expose RDP Port via Pinggy
+      - name: Expose RDP Port via Serveo
         run: |
           Write-Host "=================================================="
-          Write-Host " جاري تشغيل نفق الاتصال لنظام ويندوز..."
-          Write-Host " انسخ عنوان الـ TCP الظاهر في الأسفل وضعه في تطبيق Remote Desktop"
+          Write-Host " جاري تشغيل نفق الاتصال لنظام ويندوز عبر Serveo..."
+          Write-Host " انسخ رابط الـ TCP الظاهر في الأسفل وضعه في تطبيق Remote Desktop"
           Write-Host " اسم المستخدم: runneradmin"
           Write-Host " كلمة المرور: P@ssw0rd123!"
           Write-Host "=================================================="
-          ssh -p 443 -o StrictHostKeyChecking=no -R0:localhost:3389 tcp.pinggy.io
-          
+          ssh -o StrictHostKeyChecking=no -R 0:localhost:3389 serveo.net
