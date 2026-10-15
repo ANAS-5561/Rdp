@@ -38,9 +38,9 @@ jobs:
           Start-Process -FilePath ".\playit.exe" -NoNewWindow
           
           Write-Host "=================================================="
-          Write-Host " انتظر 15 ثانية حتى يظهر رابط الـ Claim URL في السجلات أدناه..."
+          Write-Host " انتظر حتى يظهر رابط الـ Claim URL في السجلات أدناه..."
           Write-Host " افتح الرابط في متصفحك لربطه بحسابك، ثم أنشئ نفق TCP للبورت 3389"
           Write-Host " اسم المستخدم: runneradmin"
           Write-Host " كلمة المرور: P@ssw0rd123!"
           Write-Host "=================================================="
-          Start-Sleep
+          Start-Sleep 15
