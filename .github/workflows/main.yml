@@ -1,4 +1,4 @@
-name: Windows Native RDP
+name: Windows Native RDP (Playit.gg)
 
 on:
   workflow_dispatch:
@@ -24,12 +24,18 @@ jobs:
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
           Write-Host "تم تفعيل سطح المكتب البعيد بنجاح."
 
-      - name: Expose RDP Port via Serveo
+      - name: Download and Start Playit.gg
         run: |
           Write-Host "=================================================="
-          Write-Host " جاري تشغيل نفق الاتصال لنظام ويندوز عبر Serveo..."
-          Write-Host " انسخ رابط الـ TCP الظاهر في الأسفل وضعه في تطبيق Remote Desktop"
-          Write-Host " اسم المستخدم: runneradmin"
-          Write-Host " كلمة المرور: P@ssw0rd123!"
+          Write-Host " جاري تحميل وتشغيل Playit.gg لنظام ويندوز..."
           Write-Host "=================================================="
-          ssh -o StrictHostKeyChecking=no -R 0:localhost:3389 serveo.net
+          
+          # تحميل أداة playit
+          $playitUrl = "https://github.com/playit-cloud/playit-agent/releases/latest/download/playit-windows-x86_64.exe"
+          Invoke-WebRequest -Uri $playitUrl -OutFile "playit.exe"
+          
+          # تشغيل الأداة في الخلفية وربطها بمنفذ RDP (3389)
+          Start-Process -FilePath ".\playit.exe" -ArgumentList "--forward 3389:3389/tcp" -NoNewWindow
+          
+          Write-Host "انتظر قليلاً حتى يظهر رابط التوجيه (Claim URL أو العنوان المباشر) في الأسفل..."
+          Start-Sleep -Seconds 10
