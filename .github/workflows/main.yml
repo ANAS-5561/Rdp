@@ -1,42 +1,41 @@
-name: Free Cloud RDP (Pinggy)
+name: Windows Native RDP
 
 on:
   workflow_dispatch:
-    inputs:
-      vnc_password:
-        description: 'كلمة مرور الـ VNC (أكثر من 6 أحرف)'
-        required: true
-        default: '12345678'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  rdp:
+    runs-on: windows-latest
     timeout-minutes: 360
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Update & Install XFCE Desktop & VNC
+      - name: Set Administrator Password
         run: |
-          sudo apt update
-          sudo apt install -y xfce4 xfce4-goodies tightvncserver
+          net user runneradmin P@ssw0rd123!
+          echo "تم تعيين كلمة المرور بنجاح."
 
-      - name: Configure VNC Password
+      - name: Enable Remote Desktop (RDP)
         run: |
-          mkdir -p ~/.vnc
-          echo "${{ github.event.inputs.vnc_password }}" | vncpasswd -f > ~/.vnc/passwd
-          chmod 600 ~/.vnc/passwd
-          echo "desktop" > ~/.vnc/xstartup
-          chmod +x ~/.vnc/xstartup
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
+          Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+          Write-Host "تم تفعيل سطح المكتب البعيد بنجاح."
 
-      - name: Start VNC Server
+      - name: Show Workspace Files
         run: |
-          vncserver :1 -geometry 1280x720 -depth 24
+          Write-Host "مسار العمل الحالي: $env:GITHUB_WORKSPACE"
+          Get-ChildItem -Path $env:GITHUB_WORKSPACE -Recurse
 
-      - name: Start Tunnel (Pinggy)
+      - name: Expose RDP Port via Pinggy
         run: |
-          echo "=========================================="
-          echo " انسخ رابط الـ TCP الظاهر أدناه وضعْه في تطبيق VNC Viewer"
-          echo "=========================================="
-          ssh -p 443 -o StrictHostKeyChecking=no -R0:localhost:5901 tcp.pinggy.io
+          Write-Host "=================================================="
+          Write-Host " جاري تشغيل نفق الاتصال لنظام ويندوز..."
+          Write-Host " انسخ عنوان الـ TCP الظاهر في الأسفل وضعه في تطبيق Remote Desktop"
+          Write-Host " اسم المستخدم: runneradmin"
+          Write-Host " كلمة المرور: P@ssw0rd123!"
+          Write-Host "=================================================="
+          ssh -p 443 -o StrictHostKeyChecking=no -R0:localhost:3389 tcp.pinggy.io
+          
